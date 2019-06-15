@@ -24,6 +24,7 @@ app.listen(PORT, () => {
 
 app.post('/login', (request, response) => {
     console.log(`POST: '/login'`)
+    console.log(request)
     console.log(request.body)
     response.status(200).send('OK')
     // const user = request.body.username
