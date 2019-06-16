@@ -1,10 +1,16 @@
 const express = require('express')
 const cors = require('cors')
+const jwt = require('jsonwebtoken')
 
 const app = express()
+
 app.use(express.json())
-app.use(cors())
-app.options('*', cors())
+
+app.use(cors({
+    origin: 'http://localhost:8888',
+    credentials: true,
+}))
+app.options('PUT', cors())
 
 const PORT = 9999;
 
@@ -21,13 +27,15 @@ const users = [
     { id: 2, username: 'bruceWayne', password: 'batman' },
 ]
 
-app.post('/login', (request, response) => {
-    console.log(`POST: '/login'`)
+app.put('/login', (request, response) => {
     const user = getUser(request.body)
     if (!user) {
         return response.status(401).send('Not allowed')
     }
-    response.status(200).send(`User's name is ${user.username}`)
+
+    const token = createToken(user)
+    response.cookie('access_token', token, { httpOnly: true })
+    response.status(200).send({id:user.id, username: user.username})
 })
 
 const getUser = (login) => {
@@ -35,3 +43,8 @@ const getUser = (login) => {
         return user.username == login.username && user.password == login.password
     })
 }
+
+const createToken = (user) => jwt.sign({
+    id: user.id,
+    username: user.username
+}, 'mykey', { expiresIn: '3 hours' })

@@ -36,7 +36,7 @@
                 </div>
             </div>
             <div class="col-4">
-                <form>
+                <form id="login">
                     <div class="form-group">
                         <label for="username">Username</label>
                         <input type="input" name="username" class="form-control" id="username"
@@ -52,34 +52,60 @@
                     <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-key"></i> Let me
                         in!</button>
                 </form>
-
+                <div id="profile" class="card d-none">
+                    <div class="card-body">
+                        <h3 class="card-title">Hi <span></span></h3>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const form = document.querySelector('form')
+        const form = document.getElementById('login')
+        const profile = document.getElementById('profile')
 
         form.addEventListener('submit', (event) => {
             event.preventDefault()
             const formData = formDataToJson(form)
             post('http://localhost:9999/login', formData)
+                .then((response) => {
+                    hide(form)
+                    displayUsername(profile, response)
+                    show(profile)
+                })
         })
 
-        function formDataToJson(form) {
+        const hide = (element) => {
+            element.classList.add('d-none')
+        }
+
+        const show = (element) => {
+            element.classList.remove('d-none')
+        }
+
+        const displayUsername = (profile, user) => {
+            const title = profile.querySelector('h3 span')
+            title.textContent = user.username
+        }
+
+        const formDataToJson = (form) => {
             const object = {}
             const formData = new FormData(form)
             formData.forEach((value, key) => { object[key] = value })
             return JSON.stringify(object)
         }
 
-        function post(url, data) {
+        const post = (url, data) => {
             return fetch(url, {
-                method: 'POST',
+                method: 'PUT',
                 body: data,
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
+            }).then((response) => {
+                return response.json()
             })
         }
     </script>
