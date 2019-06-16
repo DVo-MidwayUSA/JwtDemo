@@ -10,8 +10,14 @@
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/4d1b257183.js"></script>
     <style>
-        .container { margin-top: 5em; }
-        .fa-key { display: inline-block; margin-right: 0.5em; }
+        .container {
+            margin-top: 5em;
+        }
+
+        .fa-key {
+            display: inline-block;
+            margin-right: 0.5em;
+        }
     </style>
 </head>
 
@@ -33,15 +39,18 @@
                 <form>
                     <div class="form-group">
                         <label for="username">Username</label>
-                        <input type="input" name="username" class="form-control" id="username" placeholder="Enter your username" required>
+                        <input type="input" name="username" class="form-control" id="username"
+                            placeholder="Enter your username" required>
                         <small id="usernameHelp" class="form-text text-muted">We'll never share your info with anyone
                             else.</small>
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" name="password" class="form-control" id="password" placeholder="Password" required>
+                        <input type="password" name="password" class="form-control" id="password" placeholder="Password"
+                            required>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-key"></i> Let me in!</button>
+                    <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-key"></i> Let me
+                        in!</button>
                 </form>
 
             </div>
@@ -54,22 +63,26 @@
         form.addEventListener('submit', (event) => {
             event.preventDefault()
             const formData = formDataToJson(form)
-            post('/login', formData)
+            post('http://localhost:9999/login', formData)
         })
 
         function formDataToJson(form) {
             const object = {}
             const formData = new FormData(form)
-            formData.forEach((value,key) => {object[key] = value})
+            formData.forEach((value, key) => { object[key] = value })
             return JSON.stringify(object)
         }
 
         function post(url, data) {
-            return fetch('/login', {
+            return fetch(url, {
                 method: 'POST',
-                body: JSON.stringify(data)
+                body: data,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             })
         }
     </script>
 </body>
+
 </html>
