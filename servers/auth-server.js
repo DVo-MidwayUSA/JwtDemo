@@ -10,7 +10,7 @@ app.use(cors({
     origin: 'http://localhost:8888',
     credentials: true,
 }))
-app.options('PUT', cors())
+app.options('*', cors())
 
 const PORT = 9999;
 
@@ -35,7 +35,12 @@ app.put('/login', (request, response) => {
 
     const token = createToken(user)
     response.cookie('access_token', token, { httpOnly: true })
-    response.status(200).send({id:user.id, username: user.username})
+    response.status(200).send({ id: user.id, username: user.username })
+})
+
+app.delete('/login', (request, response) => {
+    response.cookie('access_token', null, { maxAge: -1 })
+    response.status(200).send({})
 })
 
 const getUser = (login) => {

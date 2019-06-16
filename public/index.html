@@ -55,6 +55,7 @@
                 <div id="profile" class="card d-none">
                     <div class="card-body">
                         <h3 class="card-title">Hi <span></span></h3>
+                        <button class="btn btn-primary btn-block">Sign Out</button>
                     </div>
                 </div>
             </div>
@@ -68,11 +69,19 @@
         form.addEventListener('submit', (event) => {
             event.preventDefault()
             const formData = formDataToJson(form)
-            post('http://localhost:9999/login', formData)
-                .then((response) => {
+            ajax('http://localhost:9999/login', 'PUT', formData)
+                .then((user) => {
                     hide(form)
-                    displayUsername(profile, response)
+                    displayUsername(profile, user)
                     show(profile)
+                })
+        })
+
+        profile.querySelector('button').addEventListener('click', (event) => {
+            ajax('http://localhost:9999/login', 'DELETE')
+                .then(() => {
+                    show(form)
+                    hide(profile)
                 })
         })
 
@@ -96,9 +105,9 @@
             return JSON.stringify(object)
         }
 
-        const post = (url, data) => {
+        const ajax = (url, method, data) => {
             return fetch(url, {
-                method: 'PUT',
+                method: method,
                 body: data,
                 headers: {
                     'Content-Type': 'application/json',
