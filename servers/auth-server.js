@@ -12,11 +12,7 @@ app.use(cors({
 }))
 app.options('*', cors())
 
-const PORT = 9999;
-
-app.get('*', (request, response) => {
-    response.sendStatus(404);
-})
+const PORT = 9999
 
 app.listen(PORT, () => {
     console.log(`Auth server is running on port ${PORT}`)
@@ -41,6 +37,10 @@ app.put('/login', (request, response) => {
 app.delete('/login', (request, response) => {
     response.cookie('access_token', null, { maxAge: -1 })
     response.status(200).send({})
+})
+
+app.get('*', (request, response) => {
+    response.sendStatus(404)
 })
 
 const getUser = (login) => {

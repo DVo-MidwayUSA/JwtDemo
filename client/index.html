@@ -1,0 +1,117 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>JWT Demo</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+    <link rel="stylesheet" href="./css/styles.css" />
+
+    <script src="https://kit.fontawesome.com/4d1b257183.js"></script>
+</head>
+
+<body>
+    <div class="container px-lg-5">
+        <div class="row">
+            <div class="col-8">
+                <div class="jumbotron">
+                    <h1>Pssst... Wanna know a secret?</h1>
+                    <p>
+                        Bacon ipsum dolor amet buffalo ham hock pork chop, ribeye frankfurter flank beef ribs leberkas
+                        sirloin tongue.
+                    </p>
+                    <button id="secretsButton" class="btn btn-lg btn-primary"><i class="fas fa-unlock-alt"></i>Tell me a
+                        secret</button>
+                </div>
+            </div>
+            <div class="col-4">
+                <form id="login">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="input" name="username" class="form-control" id="username"
+                            placeholder="Enter your username" required>
+                        <small id="usernameHelp" class="form-text text-muted">We'll never share your info with anyone
+                            else.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" class="form-control" id="password" placeholder="Password"
+                            required>
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary btn-block"><i class="fas fa-key"></i> Let me
+                        in!</button>
+                </form>
+                <div id="profile" class="d-none">
+                    <h3>Hi <span></span>!</h3>
+                    <button id="signOutButton" class="btn btn-outline-primary btn-block">Sign Out</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div id="notAuthorized" class="alert alert-danger d-none" role="alert">
+                    Not allowed!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/scripts.js"></script>
+    <script>
+        const form = document.getElementById('login')
+        const profile = document.getElementById('profile')
+        const signOutButton = document.getElementById('signOutButton')
+        const secretsButton = document.getElementById('secretsButton')
+        const notAuthorized = document.getElementById('notAuthorized')
+
+        const signIn = (event) => {
+            event.preventDefault()
+            const formData = formDataToJson(form)
+            ajax('http://localhost:9999/login', 'PUT', formData)
+                .then((user) => {
+                    hide(form)
+                    hide(notAuthorized)
+                    displayUsername(profile, user)
+                    show(profile)
+                })
+        }
+
+        form.addEventListener('submit', signIn)
+
+        const signOut = () => {
+            ajax('http://localhost:9999/login', 'DELETE')
+                .then(() => {
+                    show(form)
+                    hide(notAuthorized)
+                    hide(profile)
+                    formReset(form)
+                })
+        }
+
+        signOutButton.addEventListener('click', signOut)
+
+        const getSecrets = () => {
+            ajax('http://localhost:7777/secrets', 'GET')
+                .then((response) => {
+                    if (response.status == 401) {
+                        show(notAuthorized)
+                        return
+                    }
+
+                    hide(notAuthorized)
+                })
+        }
+
+        secretsButton.addEventListener('click', getSecrets)
+    </script>
+</body>
+
+</html>
