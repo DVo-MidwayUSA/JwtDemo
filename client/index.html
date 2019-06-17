@@ -21,14 +21,21 @@
 <body>
     <div class="container px-lg-5">
         <div class="row">
+            <div class="col">
+                <div id="notAuthorized" class="alert alert-danger d-none" role="alert">
+                    <i class="fas fa-ban"></i> Not allowed!
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-8">
                 <div class="jumbotron">
                     <h1>Pssst... Wanna know a secret?</h1>
                     <p>
-                        Bacon ipsum dolor amet buffalo ham hock pork chop, ribeye frankfurter flank beef ribs leberkas
-                        sirloin tongue.
+                        Click the button below to find out a secret about the authenticated user.
                     </p>
-                    <button id="secretsButton" class="btn btn-lg btn-primary"><i class="fas fa-unlock-alt"></i>Tell me a
+                    <button id="secretsButton" class="btn btn-lg btn-primary"><i class="fas fa-unlock-alt"></i> Tell me
+                        a
                         secret</button>
                 </div>
             </div>
@@ -49,16 +56,10 @@
                     <button type="submit" class="btn btn-outline-primary btn-block"><i class="fas fa-key"></i> Let me
                         in!</button>
                 </form>
-                <div id="profile" class="d-none">
+                <div id="profile" class="profile d-none">
                     <h3>Hi <span></span>!</h3>
-                    <button id="signOutButton" class="btn btn-outline-primary btn-block">Sign Out</button>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <div id="notAuthorized" class="alert alert-danger d-none" role="alert">
-                    Not allowed!
+                    <button id="signOutButton" class="btn btn-outline-primary btn-block"><i
+                            class="fas fa-sign-out-alt"></i> Sign Out</button>
                 </div>
             </div>
         </div>
@@ -76,10 +77,15 @@
             event.preventDefault()
             const formData = formDataToJson(form)
             ajax('http://localhost:9999/login', 'PUT', formData)
-                .then((user) => {
+                .then((response) => {
+                    if (response.status == 401) {
+                        show(notAuthorized)
+                        return
+                    }
+
                     hide(form)
                     hide(notAuthorized)
-                    displayUsername(profile, user)
+                    displayUsername(profile, response)
                     show(profile)
                 })
         }
@@ -107,6 +113,7 @@
                     }
 
                     hide(notAuthorized)
+                    console.log(response)
                 })
         }
 

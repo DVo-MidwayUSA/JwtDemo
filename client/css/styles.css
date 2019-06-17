@@ -1,5 +1,9 @@
 .container {
-    margin-top: 5em;
+    margin-top: 3em;
+}
+
+.profile h3 {
+    text-align: center;
 }
 
 .fas {
